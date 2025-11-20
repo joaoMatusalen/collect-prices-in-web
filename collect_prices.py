@@ -1,15 +1,12 @@
 #%%
-
 import datetime
+import json
 
 import pandas as pd
 from selenium.webdriver import Firefox
 from selenium.webdriver.common.by import By
 
-elements_siggy = 'https://www.amazon.com.br/Cadeira-Ergon%C3%B4mica-Elements-Siggy-Cinza/dp/B0DJRWP6CZ/ref=sr_1_13?dib=eyJ2IjoiMSJ9.p-R6h6rz1jF52qgNJ8Fve9p0sggLt7k0FK-rw2PxRTBNjVCk28HX2ZSWVWzLdnBO1sHFO_0onrdzdEww79qaLCI8i5kSDkWNDjPxVuc0VF-WkA5h1EA1oI4Eh0MmkvzfOb0bFLCS-eTV-gHmLM9FF7fiyKU2IF6X_kE18H-WZ9PRT2zbagag8NG3Bm-4sl2dkap2B6DFTeiYk_mkgTxrLMZJxcaxAXk11dZTt4jIVCjWOrYjF_i4m4YJYZCerZ9tj7NSiIkpZpl_1X8A_ulYTHWN4ojlZqMLmz3VHOj6BA4.RGtKISu80loWjp8bac7a_Th9zvSFeTNAX12ftEfc_OY&dib_tag=se&keywords=cadeira+elements+sophy&qid=1763420059&sr=8-13&ufe=app_do%3Aamzn1.fos.95de73c3-5dda-43a7-bd1f-63af03b14751'
-
-
-def find_product_amazon(browser, link):
+def find_product_amazon(link):
 
     browser.get(link)
 
@@ -20,38 +17,110 @@ def find_product_amazon(browser, link):
     price_element = browser.find_element(By.CLASS_NAME, 'a-price-whole').text
     price_fraction = browser.find_element(By.CLASS_NAME, 'a-price-fraction').text
     
-    price_product = price_element + "." + price_fraction
+    product_price = price_element + "." + price_fraction
 
     now = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S.%f")
 
-    browser.quit()
+    return {'date_updated': now, 'store':'Amazon', 'name':product_name, 'price':product_price, 'link':link}
 
-    return {'date_updated': now, 'store':'Amazon', 'name':product_name, 'price':price_product, 'link':link}
+def find_product_kabum(link):
 
+    browser.get(link)
+
+    # Name
+    product_name = browser.find_element(By.CSS_SELECTOR, ".col-span-4 h1").text
+
+    # Price
+    product_price = browser.find_element(By.CLASS_NAME, 'text-4xl').text
+
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S.%f")
+
+    return {'date_updated': now, 'store':'Kabum', 'name':product_name, 'price':product_price, 'link':link}
+
+def find_product_elements(link):
+
+    browser.get(link)
+
+    # Name
+    product_name = browser.find_element(By.CLASS_NAME, 'product-info__title').text
+
+    # Price
+    product_price = browser.find_element(By.CLASS_NAME, 'finalPrice').text
+
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S.%f")
+
+    return {'date_updated': now, 'store':'Elements', 'name':product_name, 'price':product_price, 'link':link}
+
+def find_product_mercadolivre(link):
+
+    browser.get(link)
+
+    # Name
+    product_name = browser.find_element(By.CLASS_NAME, 'ui-pdp-title').text
+
+    # Price
+    product_price = ''.join(browser.find_element(By.CLASS_NAME, 'ui-pdp-price__second-line').text.split('\n')[:-1])
+
+    now = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S.%f")
+
+    return {'date_updated': now, 'store':'Mercado Livre', 'name':product_name, 'price':product_price, 'link':link}
 
 def check_store(link):
 
-    browser = Firefox()
-
     match link:
         case link if 'www.amazon.com.br' in link:
-                info_product = find_product_amazon(browser, link)
+                info_product = find_product_amazon(link)
                 return info_product
         case link if 'www.kabum.com.br' in link:
-                info_product = find_product_amazon(browser, link)
+                info_product = find_product_kabum(link)
                 return info_product
-        case link if 'www.elements.com.br' in link:
-                info_product = find_product_amazon(browser, link)
+        case link if 'loja.elements.com.br' in link:
+                info_product = find_product_elements(link)
                 return info_product
         case link if 'www.mercadolivre.com.br' in link:
-                info_product = find_product_amazon(browser, link)
+                info_product = find_product_mercadolivre(link)
                 return info_product
         case _:
                 return print('store not localizated')
-          
-def find_product(product_link):
 
-    product = check_store(product_link)
+def find_product(products):
 
-    return product
+    all_products_data = []
 
+    #product = check_store(product_link)
+
+    for product_name, links_list in products.items():
+        print(f"Scraping links for product: {product_name}")
+        
+        if not isinstance(links_list, list):
+            print(f"Warning: Links for '{product_name}' is not a list. Skipping.")
+            continue
+            
+        for link in links_list:
+            
+            print(link)
+
+            product_data = check_store(link)
+            
+            if product_data:
+                # Add the product name from the dictionary key to the scraped data
+                product_data['product_group'] = product_name
+                all_products_data.append(product_data)
+
+    browser.quit()
+
+    return all_products_data
+
+#%%
+
+with open('data/products.json', 'r') as file:
+      products = json.load(file)
+
+browser = Firefox()   
+
+list_products = find_product(products)
+
+
+#%%
+
+list_products 
