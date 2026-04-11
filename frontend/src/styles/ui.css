@@ -1,7 +1,7 @@
 .topbar-kicker,
 .eyebrow {
   display: inline-block;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -157,9 +157,101 @@
   min-height: 112px;
 }
 
-.metric-title{
-  margin: 0;
+.metric-title-row {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.metric-title {
+  margin: 0;
+}
+
+.metric-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: help;
+  transition: opacity 180ms ease, transform 180ms ease;
+  white-space: nowrap;
+}
+
+.metric-delta:hover {
+  opacity: 0.8;
+  transform: scale(1.06);
+}
+
+.metric-delta--up {
+  background: rgba(201, 75, 92, 0.13);
+  color: var(--danger);
+}
+
+.metric-delta--down {
+  background: rgba(45, 138, 94, 0.13);
+  color: var(--success);
+}
+
+.metric-delta--neutral {
+  background: var(--surface-muted);
+  color: var(--text-faint);
+}
+
+/* ── Tooltip do metric-delta (portal no document.body via createPortal) ──── */
+
+.metric-delta-tooltip {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  z-index: 9999;
+
+  background: var(--surface-strong);
+  color: var(--text-soft);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16);
+  border-radius: 12px;
+  padding: 8px 12px;
+
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+
+  max-width: min(220px, 80vw);
+
+  pointer-events: none;
+  animation: tooltip-in 160ms ease forwards;
+}
+
+@keyframes tooltip-in {
+  from { opacity: 0; transform: translate(-50%, calc(-100% + 6px)); }
+  to   { opacity: 1; transform: translate(-50%, -100%); }
+}
+
+.metric-delta-tooltip__label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.metric-delta-tooltip__arrow {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-top-color: var(--border-strong);
 }
 
 .metric-content {

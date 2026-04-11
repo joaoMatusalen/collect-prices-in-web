@@ -184,9 +184,42 @@ export default function App() {
         <section className="analytics-column">
           <div className="metrics-grid">
             <MetricCard icon={<DollarSign size={22} />} label="Preço atual" value={formatCurrency(overallStats.current)} tone="blue" />
-            <MetricCard icon={<TrendingDown size={22} />} label="Menor preço" value={formatCurrency(overallStats.min)} tone="green" />
-            <MetricCard icon={<TrendingUp size={22} />} label="Maior preço" value={formatCurrency(overallStats.max)} tone="red" />
-            <MetricCard icon={<Activity size={22} />} label="Média do período" value={formatCurrency(overallStats.avg)} tone="amber" />
+            <MetricCard
+              icon={<TrendingDown size={22} />}
+              label="Menor preço"
+              value={formatCurrency(overallStats.min)}
+              tone="green"
+              delta={overallStats.current != null && overallStats.min != null ? {
+                current: overallStats.current,
+                reference: overallStats.min,
+                tooltip: overallStats.current === overallStats.min ? 'Preço atual está igual ao menor preço do período.'
+                       : overallStats.current > overallStats.min ? 'Preço atual está acima do menor preço período.': 'Preço atual está abaixo do menor preço do período.'
+              } : null}
+            />
+            <MetricCard
+              icon={<TrendingUp size={22} />}
+              label="Maior preço"
+              value={formatCurrency(overallStats.max)}
+              tone="red"
+              delta={overallStats.current != null && overallStats.max != null ? {
+                current: overallStats.current,
+                reference: overallStats.max,
+                tooltip: overallStats.current === overallStats.max ? 'Preço atual está igual ao maior preço do período.'
+                       : overallStats.current > overallStats.max ? 'Preço atual está acima do maior preço período.': 'Preço atual está abaixo do maior preço do período.'
+              } : null}
+            />
+            <MetricCard
+              icon={<Activity size={22} />}
+              label="Média do período"
+              value={formatCurrency(overallStats.avg)}
+              tone="amber"
+              delta={overallStats.current != null && overallStats.avg != null ? {
+                current: overallStats.current,
+                reference: overallStats.avg,
+                tooltip: overallStats.current === overallStats.avg ? 'Preço atual está igual à média do período.'
+                       : overallStats.current > overallStats.avg ? 'Preço atual está acima da média do período.' : 'Preço atual está abaixo da média do período.'
+              } : null}
+            />
           </div>
 
           <ProductChart
