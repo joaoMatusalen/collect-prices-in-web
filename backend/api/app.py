@@ -384,21 +384,15 @@ def get_product_analytics(product_id):
                 cur.execute(query, tuple(params))
                 history = cur.fetchall()
                 
+                # If absolutely no data
                 if not history:
                     return jsonify({
                         "filteredData": [],
-                        "overallStats": {"current": None, "min": None, "max": None, "avg": None},
+                        "overallStats": {"current": None, "currentStore": None, "min": None, "minStore": None, "max": None, "maxStore": None, "avg": None},
                         "storeStats": []
                     })
                 
-                prices = [float(h['price']) for h in history]
-                overall_stats = {
-                    "current": prices[-1],
-                    "min": min(prices),
-                    "max": max(prices),
-                    "avg": sum(prices) / len(prices)
-                }
-                
+                # 1. Compute storeStats using the full (unfiltered by store) history
                 store_map = {}
                 for h in history:
                     store = h['store_name'] or 'Loja'
@@ -420,11 +414,57 @@ def get_product_analytics(product_id):
                         "latestUrl": latest['url'],
                         "latestScrapedAt": latest['scraped_at']
                     })
-                    
+                
                 store_stats.sort(key=lambda x: x["storeName"])
                 
+                # 2. Filter history if stere filter is provided
+                store_filter = request.args.get('store', 'all')
+                if store_filter != 'all':
+                    history_for_stats = [h for h in history if h['store_name'] == store_filter]
+                else:
+                    history_for_stats = history
+                    
+                if not history_for_stats:
+                    return jsonify({
+                        "filteredData": [],
+                        "overallStats": {"current": None, "currentStore": None, "min": None, "minStore": None, "max": None, "maxStore": None, "avg": None},
+                        "storeStats": store_stats
+                    })
+
+                # 3. Compute overallStats using history_for_stats
+                prices = [float(h['price']) for h in history_for_stats]
+                min_idx = prices.index(min(prices))
+                max_idx = prices.index(max(prices))
+                
+                filtered_store_map = {}
+                for h in history_for_stats:
+                    store = h['store_name'] or 'Loja'
+                    if store not in filtered_store_map:
+                        filtered_store_map[store] = []
+                    filtered_store_map[store].append(h)
+                
+                latest_prices = []
+                for store, items in filtered_store_map.items():
+                    latest = items[-1]
+                    latest_prices.append({
+                        "store": store, 
+                        "price": float(latest['price'])
+                    })
+                
+                best_latest = min(latest_prices, key=lambda x: x["price"])
+                
+                overall_stats = {
+                    "current": best_latest["price"],
+                    "currentStore": best_latest["store"],
+                    "min": prices[min_idx],
+                    "minStore": history_for_stats[min_idx]['store_name'],
+                    "max": prices[max_idx],
+                    "maxStore": history_for_stats[max_idx]['store_name'],
+                    "avg": sum(prices) / len(prices)
+                }
+                
                 return jsonify({
-                    "filteredData": history,
+                    "filteredData": history_for_stats,
                     "overallStats": overall_stats,
                     "storeStats": store_stats
                 })

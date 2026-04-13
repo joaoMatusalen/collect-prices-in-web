@@ -1,5 +1,5 @@
 /* ── libs react ──  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
   /* ── icons ──  */
 import {
@@ -33,6 +33,7 @@ export default function App() {
   const { theme, toggle: toggleTheme, isDark } = useTheme();
   const [notice, setNotice] = useState(null);
   const [timeRange, setTimeRange] = useState('30');
+  const [selectedStore, setSelectedStore] = useState('all');
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
   const [isProductEditOpen, setIsProductEditOpen] = useState(false);
   const [isProductLinksOpen, setIsProductLinksOpen] = useState(false);
@@ -60,9 +61,14 @@ export default function App() {
     refetchAnalytics
   } = useProductAnalytics({
     timeRange,
+    storeFilter: selectedStore,
     isDark,
     selectedProductData
   });
+
+  useEffect(() => {
+    setSelectedStore('all');
+  }, [selectedProduct]);
 
   /* ── render ───────────────────────────────────────────────────────────── */
   return (
@@ -170,6 +176,25 @@ export default function App() {
             </div>
           </label>
 
+          <label className="field">
+            <span className="field-label">Loja</span>
+            <div className="field-input field-input--select">
+              <Store size={18} />
+              <select 
+                value={selectedStore} 
+                onChange={(e) => setSelectedStore(e.target.value)}
+                disabled={loadingAnalytics || !storeStats.length}
+              >
+                <option value="all">Todas as lojas</option>
+                {storeStats.map((store) => (
+                  <option key={store.storeName} value={store.storeName}>
+                    {store.storeName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </label>
+
           <div className="toolbar-card">
             <span className="eyebrow">Links ativos</span>
             <strong>{linksSummary.active}</strong>
@@ -187,11 +212,18 @@ export default function App() {
       <main className="content-grid">
         <section className="analytics-column">
           <div className="metrics-grid">
-            <MetricCard icon={<DollarSign size={22} />} label="Preço atual" value={formatCurrency(overallStats.current)} tone="blue" />
+            <MetricCard 
+              icon={<DollarSign size={22} />} 
+              label="Preço atual" 
+              value={formatCurrency(overallStats.current)} 
+              subtext={overallStats.currentStore}
+              tone="blue" 
+            />
             <MetricCard
               icon={<TrendingDown size={22} />}
               label="Menor preço"
               value={formatCurrency(overallStats.min)}
+              subtext={overallStats.minStore}
               tone="green"
               delta={overallStats.current != null && overallStats.min != null ? {
                 current: overallStats.current,
@@ -204,6 +236,7 @@ export default function App() {
               icon={<TrendingUp size={22} />}
               label="Maior preço"
               value={formatCurrency(overallStats.max)}
+              subtext={overallStats.maxStore}
               tone="red"
               delta={overallStats.current != null && overallStats.max != null ? {
                 current: overallStats.current,
@@ -216,6 +249,7 @@ export default function App() {
               icon={<Activity size={22} />}
               label="Média do período"
               value={formatCurrency(overallStats.avg)}
+              subtext="Entre lojas"
               tone="amber"
               delta={overallStats.current != null && overallStats.avg != null ? {
                 current: overallStats.current,

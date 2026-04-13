@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import axios from 'axios';
 
-export function useProductAnalytics({ selectedProductData, timeRange, isDark }) {
+export function useProductAnalytics({ selectedProductData, timeRange, storeFilter, isDark }) {
   const [analyticsData, setAnalyticsData] = useState({
     filteredData: [],
     overallStats: { current: null, min: null, max: null, avg: null },
@@ -13,7 +13,7 @@ export function useProductAnalytics({ selectedProductData, timeRange, isDark }) 
 
   useEffect(() => {
     fetchAnalytics();
-  }, [selectedProductData?.id, timeRange, apiUrl]);
+  }, [selectedProductData?.id, timeRange, storeFilter, apiUrl]);
 
   async function fetchAnalytics() {
     if (!selectedProductData?.id) {
@@ -27,7 +27,7 @@ export function useProductAnalytics({ selectedProductData, timeRange, isDark }) 
     
     setLoadingAnalytics(true);
     try {
-      const response = await axios.get(`${apiUrl}/api/analytics/${selectedProductData.id}?days=${timeRange}`);
+      const response = await axios.get(`${apiUrl}/api/analytics/${selectedProductData.id}?days=${timeRange}&store=${encodeURIComponent(storeFilter || 'all')}`);
       setAnalyticsData(response.data);
     } catch (error) {
       console.error('Failed to fetch analytics:', error);

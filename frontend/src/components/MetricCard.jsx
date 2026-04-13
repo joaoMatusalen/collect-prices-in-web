@@ -78,7 +78,7 @@ function DeltaBadge({ current, reference, tooltipText }) {
   );
 }
 
-export function MetricCard({ icon, label, value, tone, delta }) {
+export function MetricCard({ icon, label, value, tone, delta, subtext }) {
   return (
     <article className="metric-card">
       <div className="metric-title-row">
@@ -95,6 +95,7 @@ export function MetricCard({ icon, label, value, tone, delta }) {
         <div className={`metric-icon metric-icon--${tone}`}>{icon}</div>
         <p className="metric-value">{value}</p>
       </div>
+      {subtext && <p className="metric-subtext"><strong>Loja:</strong> {subtext}</p>}
     </article>
   );
 }
