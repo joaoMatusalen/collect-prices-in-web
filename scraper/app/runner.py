@@ -42,7 +42,7 @@ def run(products: dict):
                 if result is not None:
                     result["product_name"] = product_name
                     results.append(result)
-                    print(f"  ✓ {result['store']} | BRL {result['price']:.2f} | {result['name'][:50]}")
+                    print(f"  ✓ {result['store']} | BRL {result['price']:.2f}")
 
     finally:
         browser.quit()  # Always close the browser, even if scraping fails.
