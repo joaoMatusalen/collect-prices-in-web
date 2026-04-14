@@ -1,0 +1,74 @@
+.notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+  border-radius: 28px;
+}
+
+.notice--success {
+  border-color: rgba(15, 139, 111, 0.28);
+}
+
+.notice--error {
+  border-color: rgba(217, 72, 95, 0.34);
+}
+
+.notice--info {
+  border-color: rgba(47, 111, 237, 0.34);
+}
+
+.pill,
+.store-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgba(47, 111, 237, 0.1);
+  color: var(--primary);
+}
+
+.pill--compact {
+  margin-left: 4px;
+  min-height: unset;
+  padding: 2px 8px;
+  font-size: 0.78rem;
+}
+
+.pill--danger {
+  background: rgba(217, 72, 95, 0.14);
+  color: var(--danger);
+}
+
+.empty-panel {
+  min-height: 230px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 10px;
+  color: var(--text-soft);
+}
+
+.empty-panel svg {
+  color: var(--text-faint);
+}
+
+.empty-panel p {
+  margin: 0;
+  max-width: 420px;
+  line-height: 1.6;
+}
+
+.chart-plot {
+  width: 100%;
+  height: 430px;
+}

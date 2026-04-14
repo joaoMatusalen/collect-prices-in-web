@@ -113,12 +113,12 @@ export function ProductFormModal({
                 {existingMatch ? (
                   <div className="helper-box">
                     <Check size={16} />
-                    Esse nome ja existe. Ao salvar, vamos adicionar os links ao produto atual em vez de criar um duplicado.
+                    Esse nome já existe. Ao salvar, vamos adicionar os links ao produto atual em vez de criar um duplicado.
                   </div>
                 ) : (
                   <div className="helper-box helper-box--muted">
                     <Plus size={16} />
-                    O cadastro aceita nome, grupo opcional e um ou mais links logo na criacao.
+                    O cadastro aceita nome, grupo opcional e um ou mais links logo na criação.
                   </div>
                 )}
 

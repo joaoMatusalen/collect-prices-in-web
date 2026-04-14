@@ -1,13 +1,16 @@
-import PlotlyComponent from 'react-plotly.js';
+import { useMemo } from 'react';
+import Plotly from 'plotly.js-basic-dist';
+import createPlotlyComponent from 'react-plotly.js/factory';
 import { Activity, RefreshCcw } from 'lucide-react';
 
 import { EmptyPanel } from './EmptyPanel';
 
-const Plot = PlotlyComponent.default || PlotlyComponent;
+const plotlyFactory = createPlotlyComponent.default || createPlotlyComponent;
+const Plot = plotlyFactory(Plotly);
+
 
 export function ProductChart({
   filteredData,
-  plotData,
   isDark,
   loadingHistory,
   selectedProductData,
@@ -15,6 +18,45 @@ export function ProductChart({
 }) {
   const isLargeRange = timeRange === '90' || timeRange === 'all';
   const tickFormat = isLargeRange ? '%m/%Y' : '%d/%m';
+
+  const plotData = useMemo(() => {
+    if (!filteredData?.length) {
+      return [];
+    }
+
+    const stores = [...new Set(filteredData.map((item) => item.store_name || 'Loja'))];
+    const lightPalette = ['#2f6fed', '#0f8b6f', '#d98618', '#d9485f', '#6f56d9'];
+    const darkPalette = ['#76a7ff', '#3dd6b4', '#ffbd59', '#ff7d94', '#9f8fff'];
+    const palette = isDark ? darkPalette : lightPalette;
+
+    return stores.map((store, index) => {
+      const storeData = filteredData.filter((item) => (item.store_name || 'Loja') === store);
+
+      return {
+        x: storeData.map((item) => {
+          const date = new Date(item.scraped_at);
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const hour = String(date.getHours()).padStart(2, '0');
+          const minute = String(date.getMinutes()).padStart(2, '0');
+          const second = String(date.getSeconds()).padStart(2, '0');
+          return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+        }),
+        y: storeData.map((item) => Number.parseFloat(item.price)),
+        type: 'scatter',
+        mode: 'lines+markers',
+        name: store,
+        line: { color: palette[index % palette.length], width: 3 },
+        marker: {
+          size: 7,
+          color: palette[index % palette.length],
+          line: { color: isDark ? '#0f172a' : '#ffffff', width: 1.5 }
+        },
+        hovertemplate: 'Data: %{x|%d/%m/%Y %H:%M}<br>Preço: R$ %{y:.2f}<extra></extra>'
+      };
+    });
+  }, [filteredData, isDark]);
 
   return (
     <section className="panel">
@@ -44,7 +86,7 @@ export function ProductChart({
             plot_bgcolor: 'transparent',
             font: {
               color: isDark ? '#edf2ff' : '#1f2937',
-              family: '"Space Grotesk", "Avenir Next", "Segoe UI", sans-serif'
+              family: '"Avenir Next", "Segoe UI", sans-serif'
             },
             xaxis: {
               title: '',

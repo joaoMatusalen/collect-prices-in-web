@@ -16,8 +16,6 @@ services:
     env_file: .env
     depends_on:
       - db
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
     volumes:
       - ./scraper:/app
     command: python main.py
@@ -39,8 +37,6 @@ services:
       dockerfile: backend/api/Dockerfile
     restart: 'no'
     env_file: .env
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
     ports:
       - "5000:5000"
     depends_on:

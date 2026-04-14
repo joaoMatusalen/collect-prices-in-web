@@ -47,7 +47,7 @@ def get_scraper(url: str, browser):
 def run(products: dict):
     # Reuse a single browser session so the scraping loop stays lightweight.
     options = uc.ChromeOptions()
-    # options.add_argument("--headless=new")
+    options.add_argument("--headless=new")
     browser = uc.Chrome(options=options, version_main=146)
     browser.implicitly_wait(4)
     time.sleep(random.uniform(1, 3))
