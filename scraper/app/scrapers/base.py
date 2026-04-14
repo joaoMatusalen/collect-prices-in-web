@@ -24,7 +24,6 @@ class BaseScraper(ABC):
             return {
                 "store":       self.store_name,
                 "price":       self._parse_price(raw["price"]),
-                "name":        raw["name"].strip(),
                 "url":         url,
                 "scraped_at":  datetime.now().isoformat(),
             }
