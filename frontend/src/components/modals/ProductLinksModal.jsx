@@ -183,7 +183,7 @@ export function ProductLinksModal({
                     <EmptyPanel
                       icon={<Link2 size={40} />}
                       title="Nenhum link cadastrado"
-                      description="Adicione um novo link para comecar a monitorar esse produto."
+                      description="Adicione um novo link para começar a monitorar esse produto."
                     />
                   )}
                 </>
@@ -191,7 +191,7 @@ export function ProductLinksModal({
                 <EmptyPanel
                   icon={<Link2 size={40} />}
                   title="Selecione um produto"
-                  description="Os links aparecem aqui para edicao, ativacao e desativacao."
+                  description="Os links aparecem aqui para edição, ativação e desativação."
                 />
               )}
             </div>

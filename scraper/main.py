@@ -1,4 +1,4 @@
-from app.database import create_tables, get_products_to_scrape, save_result
+from app.database import create_tables, get_products_to_scrape, save_results
 from app.runner import run
 
 # Ensure the tables and compatibility migrations exist before scraping starts.
@@ -15,8 +15,6 @@ print(f"Products found: {len(products)}")
 
 results = run(products)
 
-# Persist each collected price snapshot separately to keep the write path simple.
-for result in results:
-    save_result(result)
+save_results(results)
 
 print(f"\nTotal saved: {len(results)} records")

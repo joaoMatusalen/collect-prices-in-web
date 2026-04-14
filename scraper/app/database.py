@@ -157,3 +157,21 @@ def save_result(result: dict):
                     result["scraped_at"],
                 )
             )
+
+
+def save_results(results: list[dict]):
+    """Save all results in a single connection instead of one connection per result."""
+    if not results:
+        return
+    with get_connection() as conn:
+        for result in results:
+            product_id = get_or_create_product(conn, result["product_name"])
+            store_id = get_or_create_store(conn, result["store"])
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO price_history (product_id, store_id, price, url, scraped_at)
+                    VALUES (%s, %s, %s, %s, %s)
+                    """,
+                    (product_id, store_id, result["price"], result["url"], result["scraped_at"])
+                )
