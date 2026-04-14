@@ -8,10 +8,7 @@ class PontoScraper(BaseScraper):
     def extract(self, url: str) -> dict | None:
         self.browser.get(url)
 
-        # Ponto shares the same platform as Casas Bahia.
-        price = self.browser.find_element(
-            By.CSS_SELECTOR, "[data-testid='price-value']"
-        ).text
+        price = self.browser.find_element(By.CSS_SELECTOR, "[aria-hidden='true']").text
 
         return {
             "price": price,  # Example: "R$ 1.299,00"

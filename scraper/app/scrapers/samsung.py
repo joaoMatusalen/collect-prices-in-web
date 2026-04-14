@@ -8,9 +8,7 @@ class SamsungScraper(BaseScraper):
     def extract(self, url: str) -> dict | None:
         self.browser.get(url)
 
-        price = self.browser.find_element(
-            By.CSS_SELECTOR, ".price-sales-standard"
-        ).text
+        price = self.browser.find_element(By.CSS_SELECTOR, ".cost-box__price-now").text
 
         return {
             "price": price,  # Example: "R$ 1.299,00"

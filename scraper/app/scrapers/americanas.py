@@ -7,8 +7,7 @@ class AmericanasScraper(BaseScraper):
 
     def extract(self, url: str) -> dict | None:
         self.browser.get(url)
-
-        # Americanas, Submarino and Shoptime share the same B2W platform.
+        
         price = self.browser.find_element(By.CSS_SELECTOR, "[class*='ProductPrice_productPrice__']").text
 
         return {

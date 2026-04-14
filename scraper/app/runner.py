@@ -7,6 +7,7 @@ from .scrapers.amazon import AmazonScraper
 from .scrapers.americanas import AmericanasScraper
 from .scrapers.carrefour import CarrefourScraper
 from .scrapers.casasbahia import CasasBahiaScraper
+from .scrapers.casadascercas import CasaDasCercasScraper
 from .scrapers.extra import ExtraScraper
 from .scrapers.fastshop import FastShopScraper
 from .scrapers.kabum import KabumScraper
@@ -32,6 +33,7 @@ SCRAPERS = {
     "pontofrio.com.br": PontoScraper,
     "samsung.com.br": SamsungScraper,
     "samsung.com": SamsungScraper,
+    "casadascercas.com.br" : CasaDasCercasScraper,
 }
 
 
