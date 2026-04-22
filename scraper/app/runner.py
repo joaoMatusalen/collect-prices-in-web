@@ -82,7 +82,7 @@ def _create_browser():
 
     options.add_argument("--start-maximized")
 
-    browser = uc.Chrome(options=options, version_main=147)
+    browser = uc.Chrome(options=options)
     browser.set_page_load_timeout(int(os.getenv("SCRAPER_PAGE_LOAD_TIMEOUT_SECONDS", "30")))
     browser.implicitly_wait(int(os.getenv("SCRAPER_IMPLICIT_WAIT_SECONDS", "4")))
     time.sleep(
